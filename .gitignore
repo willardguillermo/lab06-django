@@ -1,0 +1,23 @@
+# Virtual environment
+.venv/
+
+# Environment variables (secrets)
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local database and uploaded media
+db.sqlite3
+media/
+
+# Lab guide (not versioned)
+*.docx
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+staticfiles/
