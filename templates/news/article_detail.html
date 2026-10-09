@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+  <article class="article">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="{% url 'news:home' %}">Portada</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ article.title|truncatechars:60 }}</span>
+    </nav>
+
+    <header class="article__header">
+      <ul class="tags" aria-label="Categorías">
+        {% for category in article.categories.all %}
+          <li><a class="tag" href="{% url 'news:category_detail' category.slug %}">{{ category.name }}</a></li>
+        {% endfor %}
+      </ul>
+      <h1 class="article__title">{{ article.title }}</h1>
+      <p class="article__lead">{{ article.summary }}</p>
+      <p class="meta">
+        Por <strong>{{ article.author.name }}</strong> ·
+        <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"l j \d\e F \d\e Y, H:i" }}</time>
+      </p>
+    </header>
+
+    <figure class="article__figure">
+      {% if article.featured_image %}
+        <img src="{{ article.featured_image.url }}" alt="{{ article.title }}">
+      {% else %}
+        <div class="placeholder placeholder--wide" aria-hidden="true"><span class="placeholder__initial">{{ article.title|first|upper }}</span></div>
+      {% endif %}
+    </figure>
+
+    {# Autoescaping stays on: any HTML in the body is shown as text. #}
+    <div class="article__body">
+      {{ article.body|linebreaks }}
+    </div>
+
+    <footer class="article__footer">
+      <a class="btn" href="{% url 'news:home' %}">&larr; Volver a la portada</a>
+    </footer>
+  </article>
+{% endblock %}
+
+{% block sidebar %}
+  <section class="widget author-box">
+    <h2 class="widget__title">Sobre el autor</h2>
+    <div class="author-box__head">
+      {% if article.author.photo %}
+        <img class="avatar" src="{{ article.author.photo.url }}" alt="Foto de {{ article.author.name }}" width="56" height="56">
+      {% else %}
+        <span class="avatar avatar--initial" aria-hidden="true">{{ article.author.name|first|upper }}</span>
+      {% endif %}
+      <div>
+        <p class="author-box__name">{{ article.author.name }}</p>
+        {% if article.author.email %}
+          <a class="small" href="mailto:{{ article.author.email }}">{{ article.author.email }}</a>
+        {% endif %}
+      </div>
+    </div>
+    <p class="muted small">{{ article.author.bio|default:"Este autor aún no ha escrito su biografía."|truncatewords:40 }}</p>
+  </section>
+
+  {% if related_articles %}
+    <section class="widget">
+      <h2 class="widget__title">Noticias relacionadas</h2>
+      <ul class="latest-list">
+        {% for related in related_articles %}
+          <li>
+            <a href="{% url 'news:article_detail' related.slug %}">{{ related.title }}</a>
+            <time class="muted small" datetime="{{ related.published_at|date:'c' }}">{{ related.published_at|date:"j M Y" }}</time>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {{ block.super }}
+{% endblock %}

@@ -65,6 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Categories and latest articles for the shared sidebar
+                'news.context_processors.portal_sidebar',
             ],
         },
     },

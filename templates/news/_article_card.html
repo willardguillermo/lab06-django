@@ -1,0 +1,25 @@
+{# Reusable card for one article. Expects: article; optional: featured. #}
+<article class="card{% if featured %} card--featured{% endif %}">
+  <a class="card__media" href="{% url 'news:article_detail' article.slug %}" tabindex="-1" aria-hidden="true">
+    {% if article.featured_image %}
+      <img src="{{ article.featured_image.url }}" alt="" loading="lazy">
+    {% else %}
+      <div class="placeholder"><span class="placeholder__initial">{{ article.title|first|upper }}</span></div>
+    {% endif %}
+  </a>
+  <div class="card__body">
+    <ul class="tags" aria-label="Categorías">
+      {% for category in article.categories.all %}
+        <li><a class="tag" href="{% url 'news:category_detail' category.slug %}">{{ category.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <h2 class="card__title">
+      <a href="{% url 'news:article_detail' article.slug %}">{{ article.title }}</a>
+    </h2>
+    <p class="card__summary">{% if featured %}{{ article.summary|truncatewords:45 }}{% else %}{{ article.summary|truncatewords:25 }}{% endif %}</p>
+    <p class="meta">
+      Por <strong>{{ article.author.name }}</strong> ·
+      <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"j \d\e F \d\e Y" }}</time>
+    </p>
+  </div>
+</article>

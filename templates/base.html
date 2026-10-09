@@ -1,0 +1,79 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}Portada{% endblock %} · El Observador</title>
+  <link rel="icon" href="{% static 'news/img/logo.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap">
+  <link rel="stylesheet" href="{% static 'news/css/styles.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="{% url 'news:home' %}">
+        <img class="brand__logo" src="{% static 'news/img/logo.svg' %}"
+             alt="" width="36" height="36">
+        <span class="brand__name">El Observador</span>
+      </a>
+      <nav class="site-nav" aria-label="Principal">
+        <a href="{% url 'news:home' %}"{% if request.resolver_match.url_name == "home" %} aria-current="page"{% endif %}>Portada</a>
+        <a href="{% url 'admin:index' %}">Administración</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container layout">
+    <main id="contenido" class="layout__main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <aside class="layout__sidebar" aria-label="Barra lateral">
+      {% block sidebar %}
+        <section class="widget">
+          <h2 class="widget__title">Categorías</h2>
+          <ul class="category-list">
+            {% for category in sidebar_categories %}
+              <li>
+                <a class="category-list__link{% if category.slug == request.resolver_match.kwargs.slug %} is-active{% endif %}"
+                   href="{% url 'news:category_detail' category.slug %}">
+                  <span>{{ category.name }}</span>
+                  <span class="badge">{{ category.article_count }}</span>
+                </a>
+              </li>
+            {% empty %}
+              <li class="muted small">Aún no hay categorías.</li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="widget">
+          <h2 class="widget__title">Últimas noticias</h2>
+          <ol class="latest-list">
+            {% for latest in sidebar_latest_articles %}
+              <li>
+                <a href="{% url 'news:article_detail' latest.slug %}">{{ latest.title }}</a>
+                <time class="muted small" datetime="{{ latest.published_at|date:'c' }}">{{ latest.published_at|date:"j M Y" }}</time>
+              </li>
+            {% empty %}
+              <li class="muted small">Aún no hay noticias publicadas.</li>
+            {% endfor %}
+          </ol>
+        </section>
+      {% endblock %}
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <span>&copy; {% now "Y" %} El Observador · Portal de noticias</span>
+      <span>Laboratorio 06 · Desarrollo de Aplicaciones Empresariales</span>
+    </div>
+  </footer>
+</body>
+</html>

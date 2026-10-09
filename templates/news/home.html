@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Portada{% endblock %}
+
+{% block content %}
+  <header class="page-header">
+    <p class="eyebrow">{% now "l j \d\e F \d\e Y" %}</p>
+    <h1 class="page-title">Últimas noticias</h1>
+    <p class="page-lead">Lo más reciente del portal, ordenado por fecha de publicación.</p>
+  </header>
+
+  <div class="card-grid">
+    {% for article in articles %}
+      {% include "news/_article_card.html" with article=article featured=forloop.first %}
+    {% empty %}
+      <div class="empty-state">
+        <p class="empty-state__title">Todavía no hay noticias publicadas.</p>
+        <p class="muted">Vuelve pronto o publica la primera desde la
+          <a href="{% url 'admin:index' %}">administración</a>.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
